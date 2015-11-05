@@ -21,7 +21,6 @@ public class CalculateCostModel {
 		Iterator it = clist.entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
-	        System.out.println(pair.getKey() + " = " + pair.getValue());
 			String className = (String) pair.getKey();
 			
 			ArrayList<String> methodList = new ArrayList<String>();
@@ -33,12 +32,8 @@ public class CalculateCostModel {
 			for(int i = 0; i < methodList.size(); i++) {
 			String methodName = methodList.get(i);
 			
-			System.out.println("className: " + className);
-			System.out.println("methodName: " + methodName);
-			
 			//Set up a BytecodeCounter instance to use ByCounter, using a parameterless constructor. 
 			
-		
 			counter.getInstrumentationParams().setUseResultCollector(false);
 			counter.getInstrumentationParams().enableResultLogWriter("myResults" + File.separatorChar + "ByCounter_result_");
 			counter.getInstrumentationParams().setUseArrayParameterRecording(true);
@@ -95,8 +90,7 @@ public void invokeMethods(HashMap<String, ArrayList<String>> clist) throws IOExc
 	
 	public static void main(String[] args) throws IOException, ClassHierarchyException, IllegalArgumentException, CallGraphBuilderCancelException, ClassNotFoundException {
 		InputParser ps = new InputParser();
-		
-		HashMap<String, ArrayList<String>> instrumentationList = ps.Parser();
+		HashMap<String, ArrayList<String>> instrumentationList = ps.Parser(args[0]);
 		CalculateCostModel cp = new CalculateCostModel();
 		//cp.invokeMethods(instrumentationList);
 		try {

@@ -17,12 +17,12 @@ import com.ibm.wala.util.config.AnalysisScopeReader;
 import com.ibm.wala.util.io.FileProvider;
 
 public class InputParser {
-	public static HashMap<String, ArrayList<String>> Parser() throws ClassHierarchyException, IOException, IllegalArgumentException, CallGraphBuilderCancelException
+	public static HashMap<String, ArrayList<String>> Parser(String baseFilename) throws ClassHierarchyException, IOException, IllegalArgumentException, CallGraphBuilderCancelException
 	{
 		File exFile = new FileProvider().getFile("src/exclusions.txt");
 		
 		// Initialize Scope
-		AnalysisScope scope = AnalysisScopeReader.makeJavaBinaryAnalysisScope("PriorityQueue.jar", exFile);
+		AnalysisScope scope = AnalysisScopeReader.makeJavaBinaryAnalysisScope(baseFilename, exFile);
 		
 		//make class hierarchy from scope
 		ClassHierarchy cha = ClassHierarchy.make(scope);
@@ -31,6 +31,7 @@ public class InputParser {
 		File file = new File("instrumenterMethods.txt");
 		FileWriter fw = new FileWriter(file.getName(),true);
 		BufferedWriter bw = new BufferedWriter(fw);
+		
 		ArrayList<String> mlist = new ArrayList<String>();
 		HashMap<String, ArrayList<String>> instrumenterMap = new HashMap<String, ArrayList<String>>();
 		
@@ -62,8 +63,8 @@ public class InputParser {
 			// Get all methods for a class
 			for (IMethod m : c.getDeclaredMethods())
 			{
-				if(m.isPublic())
-				{
+				//if(m.isPublic())
+				//{
 				String mname = m.getName().toString();
 				String paramType = new String();
 				String paramtemp = new String();
@@ -71,9 +72,6 @@ public class InputParser {
 				boolean inheritanceFlag = false;
 				if(!((mlist.contains(mname)) || mname.toString().startsWith("java.lang") || mname.toString().contains("<init>") || mname.toString().contains("<clinit>")))
 				{
-					//bw.write(" Method:");
-					//bw.write( retType + " " + mname + "(" + paramType + ")");
-					//bw.write("\n");
 					// Handle method argument reconstruction
 					for(int i = 0; i < m.getNumberOfParameters(); i++) {
 						paramtemp = m.getParameterType(i).getName().toString();
@@ -114,15 +112,9 @@ public class InputParser {
 							paramtemp += "[]";
 					}
 					
-					//if(m.getParameterType(0).getName().toString().equals(cname)) {
-					//	if(m.getNumberOfParameters() == 1)
-					//	paramType = "";	
-					//}
-					//else {
-						if(m.getNumberOfParameters() == 0) {
-							paramType = "";
-						}
-					//}
+					if(m.getNumberOfParameters() == 0) {
+						paramType = "";
+					}
 				
 				retType = handleType(paramtemp);
 				if(!(mname.toString().startsWith("<init>"))) {
@@ -134,7 +126,6 @@ public class InputParser {
 				bw.write("\n");
 				}
 				mlist.add(mname);
-				}
 			}
 			mlist.clear();
 		}
