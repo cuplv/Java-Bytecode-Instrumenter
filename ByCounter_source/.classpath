@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/asm-3.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/asm-analysis-3.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/asm-commons-3.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/asm-tree-3.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/asm-util-3.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/asm-xml-3.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/de.uka.ipd.sdq.pcm.diagram.feature_3.5.0.201401301023.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/de.uka.ipd.sdq.pcm.diagram.source.feature_3.5.0.201401301023.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/de.uka.ipd.sdq.pcm.feature_3.5.0.201401301023.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/de.uka.ipd.sdq.pcm.resultdecorator.feature_3.5.0.201401301022.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/de.uka.ipd.sdq.pcm.resultdecorator.source.feature_3.5.0.201401301022.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/de.uka.ipd.sdq.pcm.source.feature_3.5.0.201401301023.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/de.uka.ipd.sdq.pcmsolver.feature_3.5.0.201401301022.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/de.uka.ipd.sdq.pcmsolver.source.feature_3.5.0.201401301022.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/iText-2.1.7.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/javassist-3.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/javautil-3.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/jcommon-0.9.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/jfreechart-1.0.13.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/org.clapper.util_3.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/aniket/GITHUB/JavaBytecodeInstrumenter/ByCounter_source/dependencies/org.jfree.jfreechart_1.0.9.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
