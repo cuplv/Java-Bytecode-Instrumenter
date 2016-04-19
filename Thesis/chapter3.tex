@@ -1,0 +1,16 @@
+\chapter{Model}
+\label{model}
+Our cost model needs to predict the value of the dependent variable -- execution time, using a linear function of the independent variables -- method counts. \\
+
+A naive approach to bucketing would be accounting for each method used in the application as a separate bucket. The standard error for coefficients in multiple regression can be high if we don't account for the correct subsets of independent variables in the model. The variance of coefficient for a variable could increase if there is high correlation among with another variable. The mean squared error for all the variables gives a good indication of the estimate provided by the cost model. Even though a model shows an ideal coefficient of determination, it may not be sufficient to give an accurate estimate for an independent test application using the same independent variables i.e. methods in our case. There is a need to refine the cost model to address the standard error among variables within a model and the mean squared error for accurate estimation of test applications.\\
+
+Model refinement addresses two specific problems: \textbf{Subset selection} and \textbf{Estimation Accuracy}.
+
+\section{Subset Selection}
+An important decision to be made is the bucketing (categorization) of methods in a Java application to perform multiple linear regression. This is termed as ``subset selection'' for the model. The naive approach considers all independent variables in the data for prediction. There are several reasons why this could be undesirable:
+\begin{itemize}
+\item Estimates of regression coefficients are likely to be unstable due to multi-collinearity in models with many variables. 
+\item We get better insights into the influence of regressors from models with fewer variables as the coefficients are more stable for parsimonious models.
+\item It can be shown that using independent variables that are uncorrelated with the dependent variable will increase the variance of predictions.
+\item It can be shown that dropping independent variables that have small (non-zero) coefficients can reduce the average error of predictions.
+\end{itemize}

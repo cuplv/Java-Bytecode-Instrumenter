@@ -1,0 +1,10 @@
+\chapter{Introduction}
+\label{introchap}
+
+The cost model provides estimates pertaining to the execution time for expensive methods in Java bytecode. Java applications are profiled to generate: 
+\begin{enumerate}
+\item Counts of method invocations and 
+\item Total execution time of the application for a large number of runs. 
+\end{enumerate}
+This profiling is performed with the help of bytecode instrumentation. The data generated from these runs is fed to a Linear Regression toolbox to efficiently predict the ``time per method" metric for that specific application.
+

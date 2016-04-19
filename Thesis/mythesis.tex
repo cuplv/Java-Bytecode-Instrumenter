@@ -1,0 +1,76 @@
+\documentclass[defaultstyle,11pt]{thesis}
+
+\usepackage{amssymb}		% to get all AMS symbols
+\usepackage{graphicx}		% to insert figures
+\usepackage{hyperref}		% PDF hyperreferences??
+
+%%%%%%%%%%%%   All the preamble material:   %%%%%%%%%%%%
+
+\title{Execution Time Disambiguation Profiling}
+
+\author{Aniket Kumar}{Lata}
+
+\otherdegrees{B.E., University of Mumbai, 2012}
+
+\degree{Master of Science}		%  #1 {long descr.}
+	{Electrical and Computer Engineering}		%  #2 {short descr.}
+
+\dept{Department of}			%  #1 {designation}
+	{Electrical and Computer Engineering}		%  #2 {name}
+
+\advisor{Prof.}				%  #1 {title}
+	{Pavol {\v C}ern\'y }			%  #2 {name}
+
+\reader{Prof. Ashutosh Trivedi}		%  2nd person to sign thesis
+\readerThree{Prof. Bor-Yuh Evan Chang}		%  3rd person to sign thesis
+
+\abstract{  \OnePageChapter	% because it is very short
+
+	We consider the problem of developing an efficient cost model for Java Bytecode, where cost is determined in terms of execution time and memory usage. The key insight is that the execution time of Java applications can be predicted by modeling these applications based on the method invocation counts and their linear fitting to get an accurate estimate. Cost estimates for an application can be useful in determining parameters such as worst case execution time which can form a basis for static analyses and can be useful in distributed applications.
+	}
+
+\dedication[Dedication]{	% NEVER use \OnePageChapter here.
+	To all my family, friends for the support and guidance.
+	}
+
+\acknowledgements{	\OnePageChapter	% *MUST* BE ONLY ONE PAGE!
+	
+	}
+
+% \IRBprotocol{E927F29.001X}	% optional!
+
+\ToCisShort	% use this only for 1-page Table of Contents
+
+\LoFisShort	% use this only for 1-page Table of Figures
+% \emptyLoF	% use this if there is no List of Figures
+
+\LoTisShort	% use this only for 1-page Table of Tables
+% \emptyLoT	% use this if there is no List of Tables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%       BEGIN DOCUMENT...         %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\input chapter1.tex
+\input chapter2.tex
+\input chapter3.tex
+\input chapter4.tex
+\input chapter5.tex
+\input chapter6.tex
+\input chapter7.tex
+
+%%%%%%%%%   then the Bibliography, if any   %%%%%%%%%
+%\bibliographystyle{plain}	% or "siam", or "alpha", etc.
+%\nocite{*}		% list all refs in database, cited or not
+%\bibliography{refs}		% Bib database in "refs.bib"
+
+%%%%%%%%%   then the Appendices, if any   %%%%%%%%%
+%\appendix
+%\input appendixA.tex
+%\input appendixB.tex
+
+
+\end{document}
+
