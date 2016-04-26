@@ -3,14 +3,30 @@
 \usepackage{amssymb}		% to get all AMS symbols
 \usepackage{graphicx}		% to insert figures
 \usepackage{hyperref}		% PDF hyperreferences??
-
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\lstset{
+language=[LaTeX]TeX,
+basicstyle=\ttfamily,
+columns=flexible,
+breaklines=true
+}
+\usepackage{hyperref}
+\hypersetup{
+   colorlinks,
+   citecolor=black,
+   filecolor=black,
+   linkcolor=black,
+   urlcolor=black
+}
 %%%%%%%%%%%%   All the preamble material:   %%%%%%%%%%%%
 
 \title{Execution Time Disambiguation Profiling}
 
 \author{Aniket Kumar}{Lata}
 
-\otherdegrees{B.E., University of Mumbai, 2012}
+\otherdegrees{B.E., University of Mumbai 2012}
 
 \degree{Master of Science}		%  #1 {long descr.}
 	{Electrical and Computer Engineering}		%  #2 {short descr.}
@@ -22,15 +38,15 @@
 	{Pavol {\v C}ern\'y }			%  #2 {name}
 
 \reader{Prof. Ashutosh Trivedi}		%  2nd person to sign thesis
-\readerThree{Prof. Bor-Yuh Evan Chang}		%  3rd person to sign thesis
+\readerThree{Prof. Sriram Sankaranarayanan}		%  3rd person to sign thesis
 
 \abstract{  \OnePageChapter	% because it is very short
 
-	We consider the problem of developing an efficient cost model for Java Bytecode, where cost is determined in terms of execution time and memory usage. The key insight is that the execution time of Java applications can be predicted by modeling these applications based on the method invocation counts and their linear fitting to get an accurate estimate. Cost estimates for an application can be useful in determining parameters such as worst case execution time which can form a basis for static analyses and can be useful in distributed applications.
+	We consider the problem of developing an efficient cost model for Java Bytecode, where cost is determined in terms of execution time. The key insight is that the execution time of Java applications can be predicted by modeling these applications based on the method invocation counts and their linear fitting to get an accurate estimate. Cost estimates for an application can be useful in determining parameters such as worst case execution time which can form a basis for static analyses and can be useful in distributed applications.
 	}
 
 \dedication[Dedication]{	% NEVER use \OnePageChapter here.
-	To all my family, friends for the support and guidance.
+	To all my mentors, friends and family for their support and guidance.
 	}
 
 \acknowledgements{	\OnePageChapter	% *MUST* BE ONLY ONE PAGE!
@@ -52,6 +68,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
+\begin{flushleft}
 
 \input chapter1.tex
 \input chapter2.tex
@@ -71,6 +88,6 @@
 %\input appendixA.tex
 %\input appendixB.tex
 
-
+\end{flushleft}
 \end{document}
 
