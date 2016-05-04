@@ -1,176 +1,242 @@
 \chapter{Motivating Examples and the Cost Model approach}
 \label{examples}
-\section{Block Timing}
-Java bytecode can be profiled at different points of interest to measure execution time for these sections of code. These measurements need to be consistent to ensure disambiguation of the analysis.\newline 
-We start with profiling the basic blocks which are the most fundamental units of a program. Basic blocks present a straight-line code sequence making them highly amenable to analysis. Instrumentation can be added to add source code for timing the basic blocks within a program. For disambiguation profiling, we consider an example program shown below with two basic blocks.\newline
-\subsection{Examples}
+\section{Basic Block Timing}
+Java bytecode can be profiled at different points of interest to measure execution time for these sections of code. These measurements need to be consistent to ensure disambiguation of the timing analysis. To perform these measurements, we use instrumentation techniques for adding bytecode to existing applications. Bytecode instrumentation is a process where new functionality is added to a program by modifying the bytecode of a set of classes before they are loaded by the virtual machine. The JVM interprets that bytecode at runtime and then executes the correct native system instructions according to that bytecode.\newline 
+
+We start our analysis by trying to disambiguate the execution time for basic blocks within a Java application. These are the most fundamental units of a program. Basic blocks present a straight-line code sequence making them highly amenable to analysis. These blocks have a singe entry point and a single exit point. Basic Blocks are useful in numerous program transformations and optimizations.\newline
+
+Our aim in this section is to determine the time taken by basic blocks of a Java application to execute for a given set of inputs. One very straightforward approach in timing basic blocks is to identify the blocks and add timing code before and after the blocks. This analysis is termed as "Fine grain analysis". In the next subsection, we present experiments conducted with fine grain analysis, the results obtained and subsequent inferences.
+
+\subsection{Fine grain analysis}
+Java bytecode can be instrumented to add source code for timing the basic blocks within a program. We add System.nanotime() calls before and after each basic block and print the time measurement for each basic block. Our goal here is to verify if this method works accurately for execution time disambiguation of basic blocks. For disambiguation profiling, we consider an example program shown below with three basic blocks.\newline
+
+\subsubsection{Examples}
 \singlespacing
 \begin{lstlisting}
 public void workerFunction(int arg){
 	int N = arg;
-      int x = 0, a = 1, m = 0;
-      if(N > 5) {
-      	// Basic block 1 starts
-            x++;
+    int x = 0, a = 1, m = 0, i = 0;
+    ArrayList<Integer> alist = new ArrayList<Integer>();
+
+    if(N > 50) {
+    		// Basic block 1 starts
+        x++;
+        x = x * N;
+        x &= (a << 1);
+        alist.add(x);
+        // Basic block 1 ends
+     }  else {
+        		do{
+               	// Basic block 2 starts
+            		x += i;
+                m = (x >> (N - i) & 1);
+                i++;
+                alist.add(x);
+                // Basic block 2 ends
+             }while(i < N);
+        }
+        if(x % 2 == 0) {
+        		// Basic block 3 starts
             x = x * N;
-            x &= (a << 1);
-            int i = 0;
-            // Basic block 1 ends
-            do{
-            	// Basic block 2 starts
-                  x += i;
-                  m = (x >> (N - i) & 1);
-                  i++;
-                  // Basic block 2 ends
-            }while(i < N);
-      }
+            x %= N/3.14;
+            x |= 34;
+            java.lang.Thread.sleep(1);
+            // Basic block 3 ends                   
+        }
  }
 \end{lstlisting}
 \doublespacing
 
-The worker function is instrumented to measure execution time of the two basic blocks as shown in the modified worker function:
+The worker function is instrumented to measure execution time of the three basic blocks as shown in the modified worker function:
 
 \singlespacing
 \begin{lstlisting}
 public void workerFunction(int arg){
-	  int N = arg;
-      int x = 0, a = 1, m = 0;
-      if(N > 5) {
-		long l1 = System.nanoTime();
-      	// Basic block 1 starts
-    
-            x++;
+	int N = arg;
+    int x = 0, a = 1, m = 0, i = 0;
+    ArrayList<Integer> alist = new ArrayList<Integer>();
+
+    if(N > 50) {
+    		// Basic block 1 starts
+    		long l1 = System.nanoTime();
+        x++;
+        x = x * N;
+        x &= (a << 1);
+        alist.add(x);
+        long l4 = System.nanoTime();
+        long l7 = l4 - l1;
+        double d = (double)l7 / 1000000D;
+        System.out.println((new StringBuilder()).append("\n\rDURATION: ").append(d).toString());
+        // Basic block 1 ends
+     }  else {
+        		do{
+               	// Basic block 2 starts
+				long l2 = System.nanoTime();               	
+            		x += i;
+                m = (x >> (N - i) & 1);
+                i++;
+                alist.add(x);
+                long l6 = System.nanoTime();
+                long l9 = l6 - l2;
+                double d2 = (double)l9 / 1000000D;
+                System.out.println((new StringBuilder()).append("\n\rDURATION: ").append(d2).toString());
+                // Basic block 2 ends
+             }while(i < N);
+        }
+        if(x % 2 == 0) {
+        		// Basic block 3 starts
+        		long l3 = System.nanoTime();
             x = x * N;
-            x &= (a << 1);
-            int i = 0;
-		// Basic block 1 ends
-		long l3 = System.nanoTime();
-            long l5 = l3 - l1;
-            double d = (double)l5 / 1000000D;
-            System.out.println((new StringBuilder()).append("\n\rDURATION: ").append(d).toString());
-            
-            do{
-			long l2 = System.nanoTime();
-            	// Basic block 2 starts
-                  x += i;
-                  m = (x >> (N - i) & 1);
-                  i++;
-                  // Basic block 2 ends
-		    long l4 = System.nanoTime();
-                long l6 = l4 - l2;
-                double d1 = (double)l6 / 1000000D;
-                System.out.println((new StringBuilder()).append("\n\rDURATION: ").append(d1).toString());
-            }while(i < N);
-      }
+            x %= N/3.14;
+            x |= 34;
+            java.lang.Thread.sleep(1);
+            long l5 = System.nanoTime();
+            long l8 = l5 - l3;
+            double d1 = (double)l8 / 1000000D;
+            System.out.println((new StringBuilder()).append("\n\rDURATION: ").append(d1).toString());
+            // Basic block 3 ends                   
+        }
  }
 \end{lstlisting}
 \doublespacing
 
-\subsection{Results}
+\subsubsection{Results}
 The basic block measurements were tested by executing the instrumented version of the code multiple times with the same input.\newline
 
-\textbf{Command:} \$ java -jar Test.jar 6\\
+\textbf{Commands:} \$ java -jar Test.jar 8\\
+				   \$ java -jar Test.jar 56\\	  
 
 \textbf{Run 1:}
 
 Execution time measurements in milliseconds(ms):
 
-Basic block 1: 0.181 
+Basic block 1: 0.440963 
 
 Basic block 2:\\
+\hspace{2em} Iteration 1: 0.332355\\
+\hspace{2em} Iteration 2: 0.0012\\
+\hspace{2em} Iteration 3: 0.001012\\
+\hspace{2em} Iteration 4: 0.000965\\
+\hspace{2em} Iteration 5: 0.000966\\
+\hspace{2em} Iteration 6: 0.000887\\
+\hspace{2em} Iteration 7: 0.000926\\
+\hspace{2em} Iteration 8: 0.000914\\
 
-\hspace{2em} Iteration 1: 0.291 \\
-\hspace{2em} Iteration 2: 0.199 \\
-\hspace{2em} Iteration 3: 0.215\\
-\hspace{2em} Iteration 4: 0.193\\
-\hspace{2em} Iteration 5: 0.202\\
-\hspace{2em} Iteration 6: 0.191
+Basic block 3: 1.11022\\
+
 \textbf{Run 2:}
 
 Execution time measurements in milliseconds(ms):\\
 
-Basic block 1: 0.231
+Basic block 1: 0.318824\\
 
 Basic block 2:\\
-\hspace{2em} Iteration 1: 0.3\\
-\hspace{2em} Iteration 2: 0.403\\
-\hspace{2em} Iteration 3: 0.182\\
-\hspace{2em} Iteration 4: 0.257\\
-\hspace{2em} Iteration 5: 0.194\\
-\hspace{2em} Iteration 6: 0.287\\
+\hspace{2em} Iteration 1: 0.310898\\
+\hspace{2em} Iteration 2: 0.001169\\
+\hspace{2em} Iteration 3: 0.001046\\
+\hspace{2em} Iteration 4: 0.000961\\
+\hspace{2em} Iteration 5: 0.000945\\
+\hspace{2em} Iteration 6: 0.000895\\
+\hspace{2em} Iteration 7: 0.000904\\
+\hspace{2em} Iteration 8: 0.000867\\
+
+Basic block 3: 1.086663\\
 
 \textbf{Run 3:}
 
 Execution time measurements in milliseconds(ms):\\
 
-Basic block 1: 0.432
+Basic block 1: 0.299579\\
 
 Basic block 2:\\
-\hspace{2em} Iteration 1: 0.354\\
-\hspace{2em} Iteration 2: 0.349\\
-\hspace{2em} Iteration 3: 0.301\\
-\hspace{2em} Iteration 4: 0.291\\
-\hspace{2em} Iteration 5: 0.324\\
-\hspace{2em} Iteration 6: 0.289\\
+\hspace{2em} Iteration 1: 0.373075\\
+\hspace{2em} Iteration 2: 0.001417\\
+\hspace{2em} Iteration 3: 0.001294\\
+\hspace{2em} Iteration 4: 0.00115\\
+\hspace{2em} Iteration 5: 0.001131\\
+\hspace{2em} Iteration 6: 0.001112\\
+\hspace{2em} Iteration 7: 0.001073\\
+\hspace{2em} Iteration 8: 0.001084\\
+
+Basic block 3: 1.089375\\
 
 \textbf{Run 4:}
 
 Execution time measurements in milliseconds(ms):\\
 
-Basic block 1: 0.286
+Basic block 1: 0.310518\\
 
 Basic block 2:\\
-\hspace{2em} Iteration 1: 0.487\\
-\hspace{2em} Iteration 2: 0.387\\
-\hspace{2em} Iteration 3: 0.421\\
-\hspace{2em} Iteration 4: 0.393\\
-\hspace{2em} Iteration 5: 0.331\\
-\hspace{2em} Iteration 6: 0.372\\
+\hspace{2em} Iteration 1: 0.317869\\
+\hspace{2em} Iteration 2: 0.001171\\
+\hspace{2em} Iteration 3: 0.001075\\
+\hspace{2em} Iteration 4: 0.000916\\
+\hspace{2em} Iteration 5: 0.001008\\
+\hspace{2em} Iteration 6: 0.000965\\
+\hspace{2em} Iteration 7: 0.000921\\
+\hspace{2em} Iteration 8: 0.000934\\
+
+Basic block 3: 1.095043
 
 \textbf{Statistics: }\\
 
 Basic block 1:
-\hspace{2em} Mean: 0.2825
-\hspace{2em} Standard Deviation: 0.1085
-\hspace{2em} Variance: 0.01177
+\hspace{2em} Mean: 0.34247
+\hspace{2em} Standard Deviation: 0.06613
+\hspace{2em} Variance: 0.00437
 
 Basic block 2:
-\hspace{2em} Mean: 0.3005
-\hspace{2em} Standard Deviation: 0.0850
-\hspace{2em} Variance: 0.00723
+\hspace{2em} Mean: 0.0426
+\hspace{2em} Standard Deviation: 0.11206
+\hspace{2em} Variance: 0.01256
 
+Basic block 3:
+\hspace{2em} Mean: 1.09533
+\hspace{2em} Standard Deviation: 0.01053
+\hspace{2em} Variance: 0.00011
 
-\subsection{Inferences}
-Disambiguation among the execution time measurements can be ensured if the timing measurements are consistent. From the above measurements, it can be seen that the variance is significant considering the fact that timing measurements require very high accuracy.
+\subsubsection{Inferences}
+Disambiguation among the execution time measurements can be ensured if the timing measurements are consistent. From the above measurements, it can be seen that the variance is significant considering the fact that timing measurements require very high accuracy. Basic block 2 has a large standard deviation from the mean taking into account all the four runs of this application. It should be noted that the input argument was the same for each run. Basic block 1 is reachable with inputs greater than 50 and basic block 2 is reachable when input argument is less than 50. The statistics show that even though the inputs did not vary, there is significant amount of variance in the timings.
 
-\section{Cost model approach}
-The basic block timing approach does not work in disambiguation of execution time as the standard deviation of the reading is significant when multiple runs are accounted. We propose a novel approach to disambiguate execution time for Java applications. The cost model profiles a program to measure the execution time for one entire run as opposed to timing individual sections of code. Instrumentation is added to fetch block invocation counts.  \newline
+\subsection{Disambiguation}
+The fine grain approach does not work in disambiguation of execution time for basic blocks as the standard deviation of the reading is significant when multiple runs are accounted. We propose a novel approach to disambiguate execution time for Java applications. The cost model profiles a program to measure the execution time for one entire run as opposed to timing individual sections of code. Instrumentation is added to fetch block invocation counts.  \newline
 The basic example would be profiled as shown in the subsequent sections to generate a cost model.
 
-\subsection{Execution time Profiling}
+\subsubsection{Execution time Profiling}
 \singlespacing
 \begin{lstlisting}
 public void workerFunction(int arg){
 	// Instrumentation for exec time 
 	long startTime = System.nanoTime();
 	int N = arg;
-      int x = 0, a = 1, m = 0;
-      if(N > 5) {
-      	// Basic block 1 starts
-            x++;
+    int x = 0, a = 1, m = 0, i = 0;
+    ArrayList<Integer> alist = new ArrayList<Integer>();
+
+    if(N > 50) {
+    		// Basic block 1 starts
+        x++;
+        x = x * N;
+        x &= (a << 1);
+        alist.add(x);
+        // Basic block 1 ends
+     }  else {
+        		do{
+               	// Basic block 2 starts
+            		x += i;
+                m = (x >> (N - i) & 1);
+                i++;
+                alist.add(x);
+                // Basic block 2 ends
+             }while(i < N);
+        }
+        if(x % 2 == 0) {
+        		// Basic block 3 starts
             x = x * N;
-            x &= (a << 1);
-            int i = 0;
-            // Basic block 1 ends
-            do{
-            	// Basic block 2 starts
-                  x += i;
-                  m = (x >> (N - i) & 1);
-                  i++;
-                  // Basic block 2 ends
-            }while(i < N);
-      }
-      
+            x %= N/3.14;
+            x |= 34;
+            java.lang.Thread.sleep(1);
+            // Basic block 3 ends                   
+        }
       long endTime = System.nanoTime();
       long elapsedTime = endTime - startTime;
       double duration = (double)elapsedTime / 1000000.0;
@@ -179,39 +245,111 @@ public void workerFunction(int arg){
 \end{lstlisting}
 \doublespacing
 
-\subsection{Block invocation Profiling}
+\subsubsection{Block invocation Profiling}
 \singlespacing
 \begin{lstlisting}
 public void workerFunction(int arg){
 	// Instrumentation for block invocation counts
-	// counters: counter_bb1, counter_bb2
+	// counters: counter_bb1, counter_bb2, counter_bb3
+	int counter_bb1 = 0, counter_bb2 = 0, counter_bb3 = 0;
 	int N = arg;
-      int x = 0, a = 1, m = 0;
-      int counter_bb1 = 0, counter_bb2 = 0;
-      if(N > 5) {
-      	// Basic block 1 starts
-      		counter_bb1++;
-            x++;
+    int x = 0, a = 1, m = 0, i = 0;
+    ArrayList<Integer> alist = new ArrayList<Integer>();
+
+    if(N > 50) {
+    		// Basic block 1 starts
+        x++;
+        x = x * N;
+        x &= (a << 1);
+        alist.add(x);
+        counter_bb1++;
+        // Basic block 1 ends
+     }  else {
+        		do{
+               	// Basic block 2 starts
+            		x += i;
+                m = (x >> (N - i) & 1);
+                i++;
+                alist.add(x);
+                counter_bb2++;
+                // Basic block 2 ends
+             }while(i < N);
+        }
+        if(x % 2 == 0) {
+        		// Basic block 3 starts
             x = x * N;
-            x &= (a << 1);
-            int i = 0;
-            // Basic block 1 ends
-            do{
-            	// Basic block 2 starts
-            		 counter_bb2++;
-                  x += i;
-                  m = (x >> (N - i) & 1);
-                  i++;
-                  // Basic block 2 ends
-            }while(i < N);
-      }
+            x %= N/3.14;
+            x |= 34;
+            counter_bb3++;
+            java.lang.Thread.sleep(1);
+            // Basic block 3 ends                   
+        }
  }
 \end{lstlisting}
 \doublespacing
 
 Model generation requires two passes for each input: execution time pass and block invocation count pass. This data is logged on the disk for a large number of inputs.\newline 
 
-\section{Bytecode disambiguation}
+\subsubsection{Results}
+
+The cost model disambiguation approach was tested on the same basic blocks example. The inputs to the application were randomly generated. Below are the results obtained:
+
+Output 1: Number of runs consists of 800 distinct inputs\\
+
+Coefficients:\\
+
+workerFunction\_basicBlock1: 0.2212857\\
+workerFunction\_basicBlock2: 0.0095599\\
+workerFunction\_basicBlock3: 1.2227574\\
+
+Output 2: Number of runs consists of 1600 distinct inputs\\
+
+Coefficients:\\
+
+workerFunction\_basicBlock1: 0.2438942\\
+workerFunction\_basicBlock2: 0.0096788\\
+workerFunction\_basicBlock3: 1.2122846\\
+
+
+Output 3: Number of runs consists of 2400 distinct inputs\\
+
+Coefficients:\\
+
+workerFunction\_basicBlock1: 0.2099943\\
+workerFunction\_basicBlock2: 0.0088905\\
+workerFunction\_basicBlock3: 1.2196536\\
+
+Output 4: Number of runs consists of 3200 distinct inputs\\
+
+Coefficients:\\
+
+workerFunction\_basicBlock1: 0.2156011\\
+workerFunction\_basicBlock2: 0.0089118\\
+workerFunction\_basicBlock3: 1.2254903\\
+
+
+\textbf{Statistics: }\\
+
+Basic block 1:
+\hspace{2em} Mean: 0.22269
+\hspace{2em} Standard Deviation: 0.01487
+\hspace{2em} Variance: 0.00022
+
+Basic block 2:
+\hspace{2em} Mean: 0.00926
+\hspace{2em} Standard Deviation: 0.00042
+\hspace{2em} Variance: 0
+
+Basic block 3:
+\hspace{2em} Mean: 1.22005
+\hspace{2em} Standard Deviation: 0.0057
+\hspace{2em} Variance: 0.00003
+
+\subsubsection{Inference}
+
+The cost model disambiguation approach shows that there is minimal standard deviation for each basic block timing estimate, much lower than the fine grain analysis approach. As it can be seen, the variance is 0 for basic block 2 whereas the fine grain approach showed much higher variance for this basic block.
+
+\section{Bytecode Instruction disambiguation}
 The cost model approach can be applied at the bytecode level to disambiguate different types of bytecode instructions and their execution times on a target platform. In this example, the disambiguation of bytecode instructions has been performed for an arithmetic intensive program.
 \subsection{Example}
 \singlespacing
@@ -369,12 +507,12 @@ As it can be seen, the estimates generated are quite accurate. We can compare th
 
 Thus, it can be inferred from this experiment that the method disambiguation experiment worked well using the cost model for the basic example illustrated. 
 
-\section{Problems with method disambiguation}
+\subsection{Problems with method disambiguation}
 Method disambiguation worked well in the example demonstrated in section 2.2.1. The methods used in the library did not have any control flows. If the method is a sequential block of statements, for a single input the same section of code will be executed. However with control flows being a part of the method, different branches are executed for differing inputs to the program. This can be illustrated well by modifying the basic example presented earlier.\newline
 
 Control flows introduce path imbalances in the program execution. In such cases, it becomes difficult to provide an estimate for the execution time of such methods if the  execution time of paths taken for an input is noticeably different.
 
-\subsection{Control flow example}
+\subsubsection{Control flow example}
 \singlespacing
 \begin{lstlisting}
 public void function1() throws InterruptedException{
@@ -401,7 +539,7 @@ public void function5(){
 \end{lstlisting}
 \doublespacing
 
-\subsection{Results}
+\subsubsection{Results}
 The control flow example in section 2.3.1 is a modification of the basic example shown with methods. We have a branch in function2() which changes the predicted estimates significantly. It can be seen that function5() gets a negative estimate and the estimate for function4() is incorrect. function2() has a branch and it's estimate will vary depending upon the value of 'n'. It is incorrect to have an estimate for functions where the control flow determines the execution time of the program.\newline
 
 
@@ -412,4 +550,60 @@ function3\hspace{2em}500.569\\
 function4\hspace{2em}5.361\\
 function5\hspace{2em}-0.907\\
 
-The aim of this example was to illustrate the amount of inaccuracy that a branch can introduce within the cost measurements. Real life programs will have a large number of branches and if these branches introduce paths that are significantly different from one another in terms of execution time, it is necessary to account mitigate the effects of control flows within a program. \newline
+The aim of this example was to illustrate the amount of inaccuracy that a branch can introduce within the cost measurements. Real life programs will have a large number of branches and if these branches introduce paths that are significantly different from one another in terms of execution time, it is necessary to mitigate the effects of control flows within a program. \newline
+
+\section{Cost Model}
+We have tested the cost model approach on instruction, basic block and method level. It could be seen that on the instruction and method level, the standard error with our estimates is high due to the presence of correlation between our independent variables in regression. In the following example, we highlight the problem of correlation between buckets.
+
+\subsection{Correlation}
+
+Let us have a look at the following Modular exponentiation class. It consists of three basic blocks.
+
+\singlespacing
+\begin{lstlisting}
+public class ModularExponentiation {
+	public static void main(String args[]) throws InterruptedException {
+    		Integer x = Integer.parseInt(args[0]);
+        Integer e = Integer.parseInt(args[1]);
+        Integer N = Integer.parseInt(args[2]);
+		squareMult(x, e, N);
+   	}
+
+	public static Integer squareMult(Integer x, Integer e, Integer N) throws InterruptedException{
+    		ArrayList<Integer> alist = new ArrayList<Integer>();
+        Integer y = 1;
+        int n = Integer.SIZE;
+        int i = n;
+        do {
+        			// basic block 1 starts
+            		y = y * y;
+                y = y % N;
+                //basic block 1 ends
+                if(((e >> (n-i)) & 1) == 1){
+                		// basic block 2 starts
+                		y = y * x;
+                    java.lang.Thread.sleep(10);
+                    y = y % N;
+                    // basic block 2 ends
+                }
+                // basic block 3 starts
+                i--;
+                alist.add(y);
+                // basic block 3 ends
+           } while(i >= 1);
+    		return y;
+    }
+}
+\end{lstlisting}
+\doublespacing
+
+On running our cost model over this program for 800 distinct inputs, we get the below estimates for basic blocks 1,2 and 3.\\
+
+Coefficients:\\
+Basic block 1: 0.01217091\\
+Basic block 2: 10.10931665\\
+Basic block 3: NA\\
+
+It can be clearly seen that basic blocks 1 (bb1) and 3 (bb3) are executed each time and hence the block invocation count for these blocks will be 1 for all the executions. The execution of basic block 2 is dependent on a condition. It can be said that there is a high correlation between basic blocks 1 and 3 such that every time bb1 is executed, bb3 is also executed and vice versa. Our cost model is unable to disambiguate between basic blocks 1 and 3 from the statistics that we obtain after profiling. The profiling procedure is explained in detail in the Implementation section. The estimate obtained for bb1 is actually the estimate for bb1 and bb3 combined. The linear regression algorithm accounts for only one of these two independent variables and generates an estimate for this variable.\newline 
+
+In the next section, we will present some techniques that can help refine the cost model by reducing the effect of correlation and thus, the standard error for each estimate.
