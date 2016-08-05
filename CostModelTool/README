@@ -1,0 +1,26 @@
+
+Instructions to use "Cost Model Mining Tool for Java bytecode"
+
+1. Pull "exploitr" source from [Exploitr](https://github.com/cuplv/exploitr)
+
+2. Build exploitr and generate exploitr.jar.
+
+3. Copy exploitr.jar into ~/CostModel/instrument/ directory
+
+4. Run the cost model tool using the below command:
+
+ $./wrapper.py <Test_jar_file> -<input_type> <no_of_input_args> -range <input_range_min> <input_range_max> <type_of_instrumentation>
+ 
+ <Test_jar_file>           : Test application jar filename
+ <input_type>              : Input argument type (-i : Integer | -f : Float | -s : String)
+ <no_of_input_args>        : Number of arguments required by application (E.g arguments 0,1,2,3...)
+ <input_range_min>         : Min range of input (Integer for -i type | Real for -f type)
+ <input_range_max>         : Max range of input (Integer for -i type, Real for -f type) 
+ <type_of_instrumentation> : basic block instrumentation or method instrumentation (block | method) 		   
+   
+ Example: $ ./wrapper.py Test.jar -i 2 -range 0 10 blocks
+
+ This example run command runs the cost model for basic blocks on integer inputs. The number of input arguments are 2 and the range for each of the arguments is within 0-10.
+
+5. The cost model output can be seen on the console and the file ~/CostModelTool/PostProcessing/coefficients.txt
+
